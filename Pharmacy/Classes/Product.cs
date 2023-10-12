@@ -11,19 +11,13 @@ namespace Pharmacy.Classes
 	{
 		public uint UPC { get; set; }
 		public string Name { get; }
-		public ProductType ProductType { get; }
 		public decimal Price { get; }
 		public uint EDRPOU { get; }
 
-		public Product(uint uPC, 
-					   string name, 
-					   ProductType productType,
-					   decimal price, 
-					   uint eDRPOU)
+		public Product(uint uPC, string name, decimal price, uint eDRPOU)
 		{
 			UPC = uPC;
 			Name = name;
-			ProductType = productType;
 			Price = price;
 			EDRPOU = eDRPOU;
 		}

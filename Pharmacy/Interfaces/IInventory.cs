@@ -10,9 +10,15 @@ namespace Pharmacy.Interfaces
 	internal interface IInventory
 	{
 		List<IProduct> Products { get; }
-		void AddProduct(IProduct product);
+		void AddProduct(IProduct product)
+		{
+			Products.Add(product);
+		}
 		void RemoveProduct(IProduct product);
 		void RemoveProduct(List<IProduct> products);
-		void RemoveAll();
+		void RemoveAll()
+		{
+			Products.Clear();
+		}
 	}
 }

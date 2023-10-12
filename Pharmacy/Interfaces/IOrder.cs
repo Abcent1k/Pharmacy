@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace Pharmacy.Interfaces
 {
-	internal class IOrder
+	internal interface IOrder
 	{
+		//uint OrderID { get; }
+		List<IProduct> Products { get; }
+		decimal TotalPrice { get; }
+		DateTime OrderDate { get; }
+		void PlaceOrder(IUser user);
 	}
 }

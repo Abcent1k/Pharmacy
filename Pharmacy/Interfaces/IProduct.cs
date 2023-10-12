@@ -6,13 +6,6 @@ using System.Threading.Tasks;
 
 namespace Pharmacy.Interfaces
 {
-	enum ProductType
-	{
-		Drug,
-		Сonsumable,
-		Device,
-	}
-
 	internal interface IExpiration
 	{
 		DateTime ExpirationDate { get; }
@@ -22,9 +15,14 @@ namespace Pharmacy.Interfaces
 	{
 		uint UPC { get; set; }
 		string Name { get; }
-		ProductType ProductType { get; }
 		decimal Price { get; }
 		uint EDRPOU { get; }
+		void Show();
+		string ToString();
+	}
+
+	internal interface IProductFormat
+	{
 		void Show();
 		string ToString();
 	}

@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Pharmacy.Classes
 {
-	internal class Cart:IInventory
+	internal class Favorites:IInventory
 	{
 		public List<IProduct> Products { get; }
 
-		public Cart()
+		public Favorites()
 		{
 			Products = new List<IProduct>();
 		}
-		public Cart(List<IProduct> products)
+		public Favorites(List<IProduct> products)
 		{
 			Products = products;
 		}
@@ -28,7 +28,7 @@ namespace Pharmacy.Classes
 			}
 			else
 			{
-				throw new InvalidOperationException($"{product.Name} are not in this cart");
+				throw new InvalidOperationException($"{product.Name} are not in favorites");
 			}
 		}
 		public void RemoveProduct(List<IProduct> products)
@@ -37,7 +37,7 @@ namespace Pharmacy.Classes
 			{
 				if (!Products.Contains(product))
 				{
-					throw new InvalidOperationException($"{product.Name} are not in this cart");
+					throw new InvalidOperationException($"{product.Name} are not in favorites");
 				}
 			}
 			foreach (IProduct product in products)
