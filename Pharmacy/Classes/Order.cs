@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Pharmacy.Classes
 {
+
 	internal class Order: IOrder
 	{
 		public delegate void OrderHandler(string message);

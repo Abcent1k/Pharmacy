@@ -9,40 +9,54 @@ namespace Pharmacy.Classes
 {
 	internal class Favorites: IInventory
 	{
-		public List<IProduct> Products { get; }
+		public List<InventoryProduct> Products { get; }
 
 		public Favorites()
 		{
-			Products = new List<IProduct>();
+			Products = new List<InventoryProduct>();
 		}
-		public Favorites(List<IProduct> products)
+		public Favorites(List<InventoryProduct> products)
 		{
 			Products = products;
 		}
 
 		public void RemoveProduct(IProduct product)
 		{
-			if (Products.Contains(product))
+			var index = Products.FindIndex(s => s.Product == product);
+			if (index >= 0)
 			{
-				Products.Remove(product);
+				if (Products[index].Quantity > 1)
+				{
+					Products[index] = new InventoryProduct(product, Products[index].Quantity - 1);
+				}
+				else
+				{
+					Products.RemoveAt(index);
+				}
 			}
 			else
 			{
 				throw new InvalidOperationException($"{product.Name} are not in favorites");
 			}
 		}
-		public void RemoveProduct(List<IProduct> products)
+		public void RemoveProduct(InventoryProduct inv_product)
 		{
-			foreach (IProduct product in products)
+			var index = Products.FindIndex(s => s.Product == inv_product.Product);
+			if (index >= 0)
 			{
-				if (!Products.Contains(product))
+				if (Products[index].Quantity > inv_product.Quantity)
 				{
-					throw new InvalidOperationException($"{product.Name} are not in favorites");
+					Products[index] = new InventoryProduct(inv_product.Product,
+														   Products[index].Quantity - inv_product.Quantity);
+				}
+				else
+				{
+					Products.RemoveAt(index);
 				}
 			}
-			foreach (IProduct product in products)
+			else
 			{
-				RemoveProduct(product);
+				throw new InvalidOperationException($"{inv_product.Product.Name} are not in favorites");
 			}
 		}
 	}
