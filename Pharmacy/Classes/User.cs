@@ -23,5 +23,11 @@ namespace Pharmacy.Classes
 			_surname = surname;
 			_cart = new Cart();
 		}
+		public User(string name, string surname, ICart cart)
+		{
+			_name = name;
+			_surname = surname;
+			_cart = cart;
+		}
 	}
 }

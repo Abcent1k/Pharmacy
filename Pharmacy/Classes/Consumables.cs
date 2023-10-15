@@ -27,10 +27,10 @@ namespace Pharmacy.Classes
 					 decimal price,
 					 uint eDRPOU,
 					 DateTime expirationDate,
-					 ConsumableType drugType) : base(uPC, name, price, eDRPOU)
+					 ConsumableType consumableType) : base(uPC, name, price, eDRPOU)
 		{
 			_expiration_date = expirationDate;
-			_consumable_type = drugType;
+			_consumable_type = consumableType;
 		}
 
 		public override void Show()

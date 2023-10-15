@@ -13,7 +13,6 @@ namespace Pharmacy.Classes
 		public delegate void OrderHandler(string message);
 		public event OrderHandler? Notify;
 
-		//public uint OrderID { get; }
 		public List<InventoryProduct> OrderItems { get; }
 		public decimal TotalPrice { get; }
 		public DateTime OrderDate { get; private set; }
@@ -32,7 +31,8 @@ namespace Pharmacy.Classes
 		public void PlaceOrder(IUser user)
 		{
 			OrderDate = DateTime.Now;
-			Notify?.Invoke($"Замовлення на сумму {TotalPrice} від {OrderDate}");
+			Notify?.Invoke($"Замовлення на сумму {TotalPrice} від {OrderDate}\n" +
+						   $"Замовник: {user.Name} {user.Surname}");
 			user.Cart.RemoveAll();
 		}
 
