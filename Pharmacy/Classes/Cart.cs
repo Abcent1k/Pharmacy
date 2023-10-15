@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Pharmacy.Classes
 {
-	internal class Cart: ICart
+	internal class Cart : ICart
 	{
 		public List<InventoryProduct> Products { get; }
 
@@ -57,6 +57,14 @@ namespace Pharmacy.Classes
 			else
 			{
 				throw new InvalidOperationException($"{inv_product.Product.Name} are not in this cart");
+			}
+		}
+		public void ShowCart()
+		{
+			foreach (var item in Products)
+			{
+				Console.WriteLine($"Product Name - {item.Product.Name}; " +
+								  $"Quantity - {item.Quantity}; Unit price - {item.Product.Price}");
 			}
 		}
 	}

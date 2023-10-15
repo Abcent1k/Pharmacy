@@ -60,5 +60,6 @@ namespace Pharmacy.Interfaces
 		{
 			Products.Clear();
 		}
+		void ShowCart();
 	}
 }
