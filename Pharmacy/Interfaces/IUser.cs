@@ -8,7 +8,8 @@ namespace Pharmacy.Interfaces
 {
 	internal interface IUser
 	{
-		IInventory Cart { get; }
-		IInventory Favorites { get; }
+		string Name { get; }
+		string Surname { get; }
+		ICart Cart { get; }
 	}
 }

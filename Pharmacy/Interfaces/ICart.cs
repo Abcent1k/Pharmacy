@@ -17,7 +17,7 @@ namespace Pharmacy.Interfaces
 			Quantity = quantity;
 		}
 	}
-	internal interface IInventory
+	internal interface ICart
 	{
 		List<InventoryProduct> Products { get; }
 		void AddProduct(InventoryProduct inv_product)

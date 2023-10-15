@@ -14,36 +14,34 @@ namespace Pharmacy.Classes
 		public event OrderHandler? Notify;
 
 		//public uint OrderID { get; }
-		public List<IProduct> Products { get; }
+		public List<InventoryProduct> OrderItems { get; }
 		public decimal TotalPrice { get; }
 		public DateTime OrderDate { get; private set; }
 
-		public Order(List<IProduct> products)
+		public Order(List<InventoryProduct> products)
 		{
-			Products = products;
+			OrderItems = products;
 			TotalPrice = CalculateTotalPrice();
-			//OrderDate = DateTime.Now;
 		}
 		public Order(IUser user)
 		{
-			Products = user.Cart.Products;
+			OrderItems = user.Cart.Products;
 			TotalPrice = CalculateTotalPrice();
-			//OrderDate = DateTime.Now;
 		}
 
 		public void PlaceOrder(IUser user)
 		{
 			OrderDate = DateTime.Now;
-			user.Cart.RemoveAll();
 			Notify?.Invoke($"Замовлення на сумму {TotalPrice} від {OrderDate}");
+			user.Cart.RemoveAll();
 		}
 
 		private decimal CalculateTotalPrice()
 		{
 			decimal totalPrice = 0;
-			foreach (var product in Products)
+			foreach (var inv_product in OrderItems)
 			{
-				totalPrice += product.Price;
+				totalPrice += inv_product.Quantity * inv_product.Product.Price;
 			}
 			return totalPrice;
 		}

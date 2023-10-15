@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Pharmacy.Classes
 {
-	internal class Cart:IInventory
+	internal class Cart: ICart
 	{
 		public List<InventoryProduct> Products { get; }
 

@@ -9,7 +9,7 @@ namespace Pharmacy.Interfaces
 	internal interface IOrder
 	{
 		//uint OrderID { get; }
-		List<IProduct> Products { get; }
+		List<InventoryProduct> OrderItems { get; }
 		decimal TotalPrice { get; }
 		DateTime OrderDate { get; }
 		void PlaceOrder(IUser user);

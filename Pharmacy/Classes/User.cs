@@ -9,16 +9,19 @@ namespace Pharmacy.Classes
 {
 	internal class User: IUser
 	{
-		IInventory _cart;
-		IInventory _favorites;
+		private string _name;
+		private string _surname;
+		private ICart _cart;
 
-		public IInventory Cart { get { return _cart; } }
-		public IInventory Favorites { get { return _favorites; } }
+		public ICart Cart { get { return _cart; } }
+		public string Name { get { return _name; } }
+		public string Surname { get { return _surname; } }
 
-		public User()
+		public User(string name, string surname)
 		{
+			_name = name;
+			_surname = surname;
 			_cart = new Cart();
-			_favorites = new Favorites();
 		}
 	}
 }
