@@ -9,17 +9,21 @@ namespace Pharmacy.Classes
 {
 	internal abstract class Product: IProduct
 	{
-		public uint UPC { get; set; }
-		public string Name { get; }
-		public decimal Price { get; }
-		public uint EDRPOU { get; }
+		private uint _upc;
+		private string _name;
+		private decimal _price;
+		private uint _edrpou;
+		public uint UPC { get { return _upc; } set { _upc = value; } }
+		public string Name { get { return _name; } }
+		public decimal Price { get { return _price; } }
+		public uint EDRPOU { get { return _edrpou; } }
 
 		public Product(uint uPC, string name, decimal price, uint eDRPOU)
 		{
-			UPC = uPC;
-			Name = name;
-			Price = price;
-			EDRPOU = eDRPOU;
+			_upc = uPC;
+			_name = name;
+			_price = price;
+			_edrpou = eDRPOU;
 		}
 
 		public abstract void Show();

@@ -9,10 +9,13 @@ namespace Pharmacy.Classes
 {
 	internal class Order: IOrder
 	{
+		public delegate void OrderHandler(string message);
+		public event OrderHandler? Notify;
+
 		//public uint OrderID { get; }
 		public List<IProduct> Products { get; }
 		public decimal TotalPrice { get; }
-		public DateTime OrderDate { get; }
+		public DateTime OrderDate { get; private set; }
 
 		public Order(List<IProduct> products)
 		{
@@ -29,7 +32,9 @@ namespace Pharmacy.Classes
 
 		public void PlaceOrder(IUser user)
 		{
+			OrderDate = DateTime.Now;
 			user.Cart.RemoveAll();
+			Notify?.Invoke($"Замовлення на сумму {TotalPrice} від {OrderDate}");
 		}
 
 		private decimal CalculateTotalPrice()

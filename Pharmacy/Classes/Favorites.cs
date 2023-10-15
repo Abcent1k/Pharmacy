@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Pharmacy.Classes
 {
-	internal class Favorites:IInventory
+	internal class Favorites: IInventory
 	{
 		public List<IProduct> Products { get; }
 

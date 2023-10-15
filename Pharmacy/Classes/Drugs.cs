@@ -18,9 +18,12 @@ namespace Pharmacy.Classes
 	}
 	internal class Drugs: Product, IExpiration, IProductFormat
 	{
-		public DateTime ExpirationDate { get; }
-		public DrugType DrugType { get; }
-		public bool NeedRecipe { get; }
+		private DateTime _expiration_date;
+		private DrugType _drug_type;
+		private bool _need_recipe;
+		public DateTime ExpirationDate { get { return _expiration_date; } }
+		public DrugType DrugType { get { return _drug_type; } }
+		public bool NeedRecipe { get { return _need_recipe; } }
 
 		public Drugs(uint uPC, 
 					 string name, 
@@ -30,9 +33,9 @@ namespace Pharmacy.Classes
 					 DrugType drugType,
 					 bool needRecipe) :base(uPC, name, price, eDRPOU)
 		{
-			ExpirationDate = expirationDate;
-			DrugType = drugType;
-			NeedRecipe = needRecipe;
+			_expiration_date = expirationDate;
+			_drug_type = drugType;
+			_need_recipe = needRecipe;
 		}
 
 		public override void Show()
