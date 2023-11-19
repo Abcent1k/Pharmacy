@@ -8,7 +8,6 @@ namespace Pharmacy.Interfaces
 {
 	internal interface IOrder
 	{
-		ICollection<InventoryProduct> OrderItems { get; }
 		decimal TotalPrice { get; }
 		DateTime? OrderDate { get; }
 		void PlaceOrder(IUser user);

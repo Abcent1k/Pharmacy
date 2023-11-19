@@ -4,50 +4,64 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pharmacy.Classes.Products;
 
 namespace Pharmacy.Interfaces
 {
-	internal struct InventoryProduct
+	internal class InventoryProduct
 	{
-		public IProduct Product { get; set; }
+		public int CartId { get; set; }
+		public Cart Cart { get; private set; }
+		public Product Product { get; set; }
+		public uint ProductUPC { get; set; }
 		public uint Quantity { get; set; }
-		public InventoryProduct (IProduct product, uint quantity)
+		//public InventoryProduct (Product product, uint quantity, Cart cart)
+		//{
+		//	Product = product;
+		//	Quantity = quantity;
+		//	CartId = cart.UserId;
+		//}
+		public InventoryProduct(uint quantity)
+		{
+			Quantity = quantity;
+		}
+		public InventoryProduct(Product product, uint quantity):this(quantity)
 		{
 			Product = product;
-			Quantity = quantity;
+			ProductUPC = product.UPC;
 		}
 	}
 	internal interface ICart
 	{
-		List<InventoryProduct> Products { get; }
+		ICollection<InventoryProduct> Products { get; }
 		void AddProduct(InventoryProduct inv_product)
 		{
-			var index = Products.FindIndex(s => s.Product == inv_product.Product);
+			var index = (new List<InventoryProduct>(Products)).FindIndex(s => s.Product == inv_product.Product);
 
 			if (index >= 0)
 			{
-				Products[index] = new InventoryProduct(inv_product.Product, 
-													   Products[index].Quantity + inv_product.Quantity);
+				(new List<InventoryProduct>(Products))[index] = new InventoryProduct(inv_product.Product,
+					(new List<InventoryProduct>(Products))[index].Quantity + inv_product.Quantity);
 			}
 			else
 			{
 				Products.Add(inv_product);
 			}
 		}
-		void AddProduct(IProduct product)
+		void AddProduct(Product product)
 		{
-			var index = Products.FindIndex(s => s.Product == product);
+			var index = (new List<InventoryProduct>(Products)).FindIndex(s => s.Product == product);
 
 			if (index >= 0)
 			{
-				Products[index] = new InventoryProduct(product, Products[index].Quantity + 1);
+				(new List<InventoryProduct>(Products))[index] = new InventoryProduct(product, (new List<InventoryProduct>(Products))[index].Quantity + 1);
 			}
 			else
 			{
 				Products.Add(new InventoryProduct(product, 1));
 			}
 		}
-		void RemoveProduct(IProduct product);
+		void RemoveProduct(Product product);
 		void RemoveProduct(InventoryProduct inv_product);
 		void RemoveProduct(List<InventoryProduct> products)
 		{

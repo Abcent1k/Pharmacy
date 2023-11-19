@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Pharmacy.Classes;
 using Pharmacy.Classes.Products;
+using Pharmacy.Interfaces;
 
 namespace Pharmacy.Data
 {
@@ -19,6 +20,7 @@ namespace Pharmacy.Data
 		internal DbSet<Drugs> Drugs => Set<Drugs>();
 		internal DbSet<Devices> Devices => Set<Devices>();
 		internal DbSet<Consumables> Consumables => Set<Consumables>();
+		internal DbSet<InventoryProduct> InventoryProducts => Set<InventoryProduct>();
 
 		public FarmacyContext()
 		{
@@ -64,15 +66,53 @@ namespace Pharmacy.Data
 			modelBuilder.Entity<Order>().HasKey(o => new { o.Id, o.UserId });
 			modelBuilder.Entity<Order>().Property(o => o.TotalPrice).HasPrecision(18, 2);
 
-			modelBuilder.Entity<Order>()
-				.HasOne(o => o.User)
-				.WithMany(u => u.Orders)
-				.HasForeignKey(o => o.UserId);
+			modelBuilder.Entity<InventoryProduct>().HasKey(p => new { p.CartId, p.ProductUPC });
 
-			modelBuilder.Entity<Cart>()
-				.HasOne(c => c.User)
-				.WithOne(u => u.Cart)
+			//modelBuilder.Entity<Cart>()
+			//	.HasMany(c => c.Products)
+			//	.WithOne(ip => ip.Cart)
+			//	.HasForeignKey(ip => ip.CartId);
+
+			//// Настройка связи один-к-одному между Cart и Order
+			//modelBuilder.Entity<Order>()
+			//	.HasOne(o => o.Cart)
+			//	.WithOne(c => c.Order)
+			//	.HasForeignKey<Order>(o => o.CartId);
+
+			//// Настройка связи один-к-одному или один-ко-многим между InventoryProduct и Product
+			//modelBuilder.Entity<InventoryProduct>()
+			//	.HasOne(ip => ip.Product)
+			//	.WithMany() // Указание на наличие однонаправленной связи, если не требуется навигационное свойство в классе Product
+			//	.HasForeignKey(ip => ip.Product.UPC);
+
+			// Пример настройки связи один-к-одному между User и Cart
+			modelBuilder.Entity<User>()
+				.HasOne(u => u.Cart)
+				.WithOne(c => c.User)
 				.HasForeignKey<Cart>(c => c.UserId);
+
+			// Пример настройки связи один-ко-многим между User и Order
+			modelBuilder.Entity<User>()
+				.HasMany(u => u.Orders)
+				.WithOne(o => o.User)
+				.HasForeignKey(o => o.UserId)
+				.OnDelete(DeleteBehavior.Restrict); // Измените каскадное удаление на Restrict
+
+			//Пример настройки связи многие-ко - многим между Cart и Product
+			// Это потребует промежуточной сущности, например InventoryProduct
+			modelBuilder.Entity<InventoryProduct>()
+				.HasKey(ip => new { ip.CartId, ip.ProductUPC });
+
+			modelBuilder.Entity<InventoryProduct>()
+				.HasOne(ip => ip.Cart)
+				.WithMany(c => c.Products)
+				.HasForeignKey(ip => ip.CartId);
+
+			modelBuilder.Entity<InventoryProduct>()
+				.HasOne(ip => ip.Product)
+				.WithMany(p => p.InventoryProducts)
+				.HasForeignKey(ip => ip.ProductUPC);
+
 		}
 	}
 }

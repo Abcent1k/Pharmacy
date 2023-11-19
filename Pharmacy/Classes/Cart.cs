@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pharmacy.Classes.Products;
 
 namespace Pharmacy.Classes
 {
@@ -13,7 +14,8 @@ namespace Pharmacy.Classes
 		[Key]
 		public int UserId { get; private set; }
 		public User? User { get; private set; }
-		public List<InventoryProduct> Products { get; }
+		public Order? Order { get; set; } // Навигационное свойство для Order
+		public ICollection<InventoryProduct> Products { get; }
 
 		public Cart()
 		{
@@ -29,18 +31,18 @@ namespace Pharmacy.Classes
 		{
 			User = user;
 		}
-		public void RemoveProduct(IProduct product)
+		public void RemoveProduct(Product product)
 		{
-			var index = Products.FindIndex(s => s.Product == product);
+			var index = (new List<InventoryProduct>(Products)).FindIndex(s => s.Product == product);
 			if (index >= 0)
 			{
-				if (Products[index].Quantity > 1)
+				if ((new List<InventoryProduct>(Products))[index].Quantity > 1)
 				{
-					Products[index] = new InventoryProduct(product, Products[index].Quantity - 1);
+					(new List<InventoryProduct>(Products))[index] = new InventoryProduct(product, (new List<InventoryProduct>(Products))[index].Quantity - 1);
 				}
 				else
 				{
-					Products.RemoveAt(index);
+					(new List<InventoryProduct>(Products)).RemoveAt(index);
 				}
 			}
 			else
@@ -50,17 +52,17 @@ namespace Pharmacy.Classes
 		}
 		public void RemoveProduct(InventoryProduct inv_product)
 		{
-			var index = Products.FindIndex(s => s.Product == inv_product.Product);
+			var index = (new List<InventoryProduct>(Products)).FindIndex(s => s.Product == inv_product.Product);
 			if (index >= 0)
 			{
-				if (Products[index].Quantity > inv_product.Quantity)
+				if ((new List<InventoryProduct>(Products))[index].Quantity > inv_product.Quantity)
 				{
-					Products[index] = new InventoryProduct(inv_product.Product,
-														   Products[index].Quantity - inv_product.Quantity);
+					(new List<InventoryProduct>(Products))[index] = new InventoryProduct(inv_product.Product,
+														   (new List<InventoryProduct>(Products))[index].Quantity - inv_product.Quantity);
 				}
 				else
 				{
-					Products.RemoveAt(index);
+					(new List<InventoryProduct>(Products)).RemoveAt(index);
 				}
 			}
 			else

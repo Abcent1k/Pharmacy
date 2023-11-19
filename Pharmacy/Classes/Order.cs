@@ -22,20 +22,21 @@ namespace Pharmacy.Classes
 		public int UserId { get; private set; }
 		
 		public User? User { get; private set; }
-		public ICollection<InventoryProduct> OrderItems { get; }
+		//public ICollection<InventoryProduct> OrderItems { get; }
+		public Cart Cart { get; private set; }
+		public int CartId { get; private set; }
 		[Required]
 		public decimal TotalPrice { get; }
 		public DateTime? OrderDate { get; private set; }
 
-		public Order(ICollection<InventoryProduct> products)
-		{
-			TotalPrice = CalculateTotalPrice();
-			OrderItems = products;
-		}
+		//public Order(ICollection<InventoryProduct> products)
+		//{
+		//	TotalPrice = CalculateTotalPrice();
+		//	OrderItems = products;
+		//}
 		public Order()
 		{
 			TotalPrice = CalculateTotalPrice();
-			OrderItems = new List<InventoryProduct>();
 		}
 
 		public void PlaceOrder(IUser user)
@@ -50,7 +51,7 @@ namespace Pharmacy.Classes
 		private decimal CalculateTotalPrice()
 		{
 			decimal totalPrice = 0;
-			foreach (var inv_product in OrderItems)
+			foreach (var inv_product in Cart.Products)
 			{
 				totalPrice += inv_product.Quantity * inv_product.Product.Price;
 			}
