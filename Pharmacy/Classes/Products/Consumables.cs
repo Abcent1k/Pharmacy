@@ -18,13 +18,10 @@ namespace Pharmacy.Classes.Products
 
     internal class Consumables : Product, IExpiration
     {
-        private DateTime _expiration_date;
 		[Required]
-        private ConsumableType _consumable_type;
+		public DateTime ExpirationDate { get; }
 		[Required]
-		public DateTime ExpirationDate { get { return _expiration_date; } }
-		[Required]
-		public ConsumableType ConsumableType { get { return _consumable_type; } }
+		public ConsumableType ConsumableType { get; }
 
         public Consumables(uint uPC,
                      string name,
@@ -33,8 +30,8 @@ namespace Pharmacy.Classes.Products
                      DateTime expirationDate,
                      ConsumableType consumableType) : base(uPC, name, price, eDRPOU)
         {
-            _expiration_date = expirationDate;
-            _consumable_type = consumableType;
+			ExpirationDate = expirationDate;
+			ConsumableType = consumableType;
         }
 
         public override void Show()

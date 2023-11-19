@@ -15,16 +15,15 @@ namespace Pharmacy.Classes.Products
     }
     internal class Devices : Product
     {
-        private DeviceType _device_type;
 		[Required]
-		public DeviceType DeviceType { get { return _device_type; } }
+		public DeviceType DeviceType { get; }
         public Devices(uint uPC,
                      string name,
                      decimal price,
                      uint eDRPOU,
                      DeviceType deviceType) : base(uPC, name, price, eDRPOU)
         {
-            _device_type = deviceType;
+			DeviceType = deviceType;
         }
 
         public override void Show()

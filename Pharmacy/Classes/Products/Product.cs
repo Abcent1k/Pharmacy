@@ -10,32 +10,24 @@ namespace Pharmacy.Classes.Products
 {
     internal abstract class Product : IProduct
     {
-        private uint _upc;
-        private string _name;
-        private decimal _price;
-        private uint _edrpou;
 		[Key]
-		public uint UPC { get { return _upc; } set { _upc = value; } }
+		public uint UPC { get; set; }
 		[Required]
 		[MaxLength(64)]
-		public string Name { get { return _name; } private set { _name = value; } }
+		public string Name { get; private set; }
 		[Required]
-		public decimal Price { get { return _price; } private set { _price = value; } }
+		public decimal Price { get; private set; }
 		[Required]
-		public uint EDRPOU { get { return _edrpou; } private set { _edrpou = value; } }
+		public uint EDRPOU { get; private set; }
 
         public Product(uint uPC, string name, decimal price, uint eDRPOU)
         {
-            _upc = uPC;
+            UPC = uPC;
             Name = name;
-            _price = price;
+            Price = price;
 			EDRPOU = eDRPOU;
         }
-		public Product(uint uPC, decimal price)
-		{
-			_upc = uPC;
-			_price = price;
-		}
+
 
 		public abstract void Show();
         public abstract override string ToString();

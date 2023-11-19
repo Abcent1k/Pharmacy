@@ -22,7 +22,7 @@ namespace Pharmacy.Data
 
 		public FarmacyContext()
 		{
-			//Database.EnsureDeleted();
+			Database.EnsureDeleted();
 			Database.EnsureCreated();
 		}
 
@@ -39,15 +39,11 @@ namespace Pharmacy.Data
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			//modelBuilder.Entity<Product>().Property(p => p.UPC).UseIdentityColumn();
 			modelBuilder.Entity<User>().HasKey(u => u.UserId);
 
 			modelBuilder.Entity<Product>().Property(p => p.Price).HasPrecision(18, 2);
-			modelBuilder.Entity<Product>()
-				.Property(p => p.EDRPOU)
-				.HasMaxLength(8)
-				.IsFixedLength();
-
+			modelBuilder.Entity<Product>().ToTable(t => t.HasCheckConstraint("EDRPOU", "LEN(EDRPOU) = 8"));
+			
 			//modelBuilder.Entity<Drugs>().ToTable("Drugs");
 			//modelBuilder.Entity<Devices>().ToTable("Devices");
 			//modelBuilder.Entity<Consumables>().ToTable("Consumables");

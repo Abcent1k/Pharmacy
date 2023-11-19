@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace Pharmacy.Classes
 		public event OrderHandler? Notify;
 
 		[Required]
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id { get; }
 		
 		public int UserId { get; private set; }
@@ -25,12 +27,11 @@ namespace Pharmacy.Classes
 		public decimal TotalPrice { get; }
 		public DateTime? OrderDate { get; private set; }
 
-		//public Order(ICollection<InventoryProduct> products, User user)
-		//{
-		//	OrderItems = products;
-		//	TotalPrice = CalculateTotalPrice();
-		//	PlaceOrder(user);
-		//}
+		public Order(ICollection<InventoryProduct> products)
+		{
+			TotalPrice = CalculateTotalPrice();
+			OrderItems = products;
+		}
 		public Order()
 		{
 			TotalPrice = CalculateTotalPrice();

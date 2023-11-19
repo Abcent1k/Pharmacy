@@ -19,15 +19,12 @@ namespace Pharmacy.Classes.Products
     }
     internal class Drugs : Product, IExpiration, IProductFormat
     {
-		private DateTime _expiration_date;
-		private DrugType _drug_type;
-		private bool _need_recipe;
 		[Required]
-		public DateTime ExpirationDate { get { return _expiration_date; } }
+		public DateTime ExpirationDate { get; }
 		[Required]
-		public DrugType DrugType { get { return _drug_type; } }
+		public DrugType DrugType { get; }
 		[Required]
-		public bool NeedRecipe { get { return _need_recipe; } }
+		public bool NeedRecipe { get; }
 
         public Drugs(uint uPC,
                      string name,
@@ -37,9 +34,9 @@ namespace Pharmacy.Classes.Products
                      DrugType drugType,
                      bool needRecipe) : base(uPC, name, price, eDRPOU)
         {
-            _expiration_date = expirationDate;
-            _drug_type = drugType;
-            _need_recipe = needRecipe;
+			ExpirationDate = expirationDate;
+			DrugType = drugType;
+			NeedRecipe = needRecipe;
         }
 
         public override void Show()
