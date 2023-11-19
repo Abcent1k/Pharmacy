@@ -1,6 +1,7 @@
 ﻿using Pharmacy.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,17 +10,25 @@ namespace Pharmacy.Classes
 {
 	internal class Cart : ICart
 	{
+		[Key]
+		public int UserId { get; private set; }
+		public User? User { get; private set; }
 		public List<InventoryProduct> Products { get; }
 
 		public Cart()
 		{
 			Products = new List<InventoryProduct>();
 		}
-		public Cart(List<InventoryProduct> products)
-		{
-			Products = products;
-		}
+		//public Cart(User user, List<InventoryProduct> products)
+		//{
+		//	Products = products;
+		//	this.User = user;
+		//}
 
+		public void SetUser(User user)
+		{
+			User = user;
+		}
 		public void RemoveProduct(IProduct product)
 		{
 			var index = Products.FindIndex(s => s.Product == product);
@@ -66,6 +75,10 @@ namespace Pharmacy.Classes
 				Console.WriteLine($"Product Name - {item.Product.Name}; " +
 								  $"Quantity - {item.Quantity}; Unit price - {item.Product.Price}");
 			}
+		}
+		public void RemoveAll()
+		{
+			Products.Clear();
 		}
 	}
 }

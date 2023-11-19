@@ -56,10 +56,7 @@ namespace Pharmacy.Interfaces
 				RemoveProduct(inv_product);
 			}
 		}
-		void RemoveAll()
-		{
-			Products.Clear();
-		}
+		void RemoveAll();
 		void ShowCart();
 	}
 }
