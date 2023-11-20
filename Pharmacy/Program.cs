@@ -16,7 +16,9 @@ namespace Pharmacy
 		{
 			var u = new User("Саша", "Дядя");
 
-			using (var context = new FarmacyContext())
+			var contextFactory = new PharmacyContextFactory();
+
+			using (var context = contextFactory.CreateDbContext(new string[] { }))
 			{
 				context.Users.Add(u);
 				context.SaveChanges();

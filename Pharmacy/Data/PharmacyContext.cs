@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Pharmacy.Classes;
 using Pharmacy.Classes.Products;
@@ -11,7 +12,7 @@ using Pharmacy.Interfaces;
 
 namespace Pharmacy.Data
 {
-	public class FarmacyContext : DbContext
+	public class PharmacyContext : DbContext
 	{
 		internal DbSet<User> Users => Set<User>();
 		internal DbSet<Order> Orders => Set<Order>();
@@ -21,22 +22,18 @@ namespace Pharmacy.Data
 		internal DbSet<Consumables> Consumables => Set<Consumables>();
 		internal DbSet<InventoryProduct> InventoryProducts => Set<InventoryProduct>();
 
-		public FarmacyContext()
-		{
-			Database.EnsureDeleted();
-			Database.EnsureCreated();
-		}
+		//public PharmacyContext()
+		//{
+		//	Database.EnsureDeleted();
+		//	Database.EnsureCreated();
+		//}
 
+		public PharmacyContext(DbContextOptions<PharmacyContext> options): base(options) { }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			var builder = new ConfigurationBuilder();
-			builder.SetBasePath(Directory.GetCurrentDirectory());
-			builder.AddJsonFile("appsettings.json");
-			var config = builder.Build();
-			string connectionString = config.GetConnectionString("DefaultConnection");
-			optionsBuilder.UseSqlServer(connectionString);
 			optionsBuilder.EnableSensitiveDataLogging();
+			optionsBuilder.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted });
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

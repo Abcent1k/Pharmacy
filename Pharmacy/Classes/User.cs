@@ -18,6 +18,7 @@ namespace Pharmacy.Classes
 		public string Name { get; private set; }
 		[MaxLength(30)]
 		public string Surname { get; private set; }
+		public string? Email { get; set; }
 
 		public User(string name, string surname)
 		{
