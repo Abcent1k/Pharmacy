@@ -14,7 +14,6 @@ namespace Pharmacy.Data
 	public class FarmacyContext : DbContext
 	{
 		internal DbSet<User> Users => Set<User>();
-		internal DbSet<Cart> Carts => Set<Cart>();
 		internal DbSet<Order> Orders => Set<Order>();
 		internal DbSet<Product> Products => Set<Product>();
 		internal DbSet<Drugs> Drugs => Set<Drugs>();
@@ -46,9 +45,6 @@ namespace Pharmacy.Data
 			modelBuilder.Entity<Product>().Property(p => p.Price).HasPrecision(18, 2);
 			modelBuilder.Entity<Product>().ToTable(t => t.HasCheckConstraint("EDRPOU", "LEN(EDRPOU) = 8"));
 			
-			//modelBuilder.Entity<Drugs>().ToTable("Drugs");
-			//modelBuilder.Entity<Devices>().ToTable("Devices");
-			//modelBuilder.Entity<Consumables>().ToTable("Consumables");
 			modelBuilder.Entity<Consumables>()
 				.Property(c => c.ExpirationDate)
 				.HasDefaultValue(DateTime.Now.AddYears(5));
@@ -66,52 +62,34 @@ namespace Pharmacy.Data
 			modelBuilder.Entity<Order>().HasKey(o => new { o.Id, o.UserId });
 			modelBuilder.Entity<Order>().Property(o => o.TotalPrice).HasPrecision(18, 2);
 
-			modelBuilder.Entity<InventoryProduct>().HasKey(p => new { p.CartId, p.ProductUPC });
+			modelBuilder.Entity<InventoryProduct>().HasKey(p => new { p.OrderId, p.UserId, p.ProductUPC });
 
-			//modelBuilder.Entity<Cart>()
-			//	.HasMany(c => c.Products)
-			//	.WithOne(ip => ip.Cart)
-			//	.HasForeignKey(ip => ip.CartId);
+			// Configure TPH inheritance for Product and its subclasses
+			modelBuilder.Entity<Product>()
+				.HasDiscriminator<string>("ProductType")
+				.HasValue<Consumables>("Consumables")
+				.HasValue<Devices>("Devices")
+				.HasValue<Drugs>("Drugs");
 
-			//// Настройка связи один-к-одному между Cart и Order
-			//modelBuilder.Entity<Order>()
-			//	.HasOne(o => o.Cart)
-			//	.WithOne(c => c.Order)
-			//	.HasForeignKey<Order>(o => o.CartId);
-
-			//// Настройка связи один-к-одному или один-ко-многим между InventoryProduct и Product
-			//modelBuilder.Entity<InventoryProduct>()
-			//	.HasOne(ip => ip.Product)
-			//	.WithMany() // Указание на наличие однонаправленной связи, если не требуется навигационное свойство в классе Product
-			//	.HasForeignKey(ip => ip.Product.UPC);
-
-			// Пример настройки связи один-к-одному между User и Cart
-			modelBuilder.Entity<User>()
-				.HasOne(u => u.Cart)
-				.WithOne(c => c.User)
-				.HasForeignKey<Cart>(c => c.UserId);
-
-			// Пример настройки связи один-ко-многим между User и Order
+			// Configure one-to-many relationship between User and Order
 			modelBuilder.Entity<User>()
 				.HasMany(u => u.Orders)
-				.WithOne(o => o.User)
-				.HasForeignKey(o => o.UserId)
-				.OnDelete(DeleteBehavior.Restrict); // Измените каскадное удаление на Restrict
+				.WithOne()
+				.HasForeignKey(o => o.UserId) // Assuming Order has a UserId foreign key
+				.OnDelete(DeleteBehavior.NoAction); // Disable cascade delete
 
-			//Пример настройки связи многие-ко - многим между Cart и Product
-			// Это потребует промежуточной сущности, например InventoryProduct
-			modelBuilder.Entity<InventoryProduct>()
-				.HasKey(ip => new { ip.CartId, ip.ProductUPC });
+			// Configure one-to-many relationship between Order and InventoryProduct
+			modelBuilder.Entity<Order>()
+				.HasMany(o => o.InventoryProducts) // Assuming Order has a collection of InventoryProduct
+				.WithOne(ip => ip.Order) // Assuming InventoryProduct has a navigation property to Order
+				.HasForeignKey(ip => new { ip.OrderId, ip.UserId }) // Assuming InventoryProduct has an OrderId foreign key
+				.OnDelete(DeleteBehavior.NoAction); // Disable cascade delete
 
-			modelBuilder.Entity<InventoryProduct>()
-				.HasOne(ip => ip.Cart)
-				.WithMany(c => c.Products)
-				.HasForeignKey(ip => ip.CartId);
-
+			// Configure many-to-one relationship between InventoryProduct and Product
 			modelBuilder.Entity<InventoryProduct>()
 				.HasOne(ip => ip.Product)
-				.WithMany(p => p.InventoryProducts)
-				.HasForeignKey(ip => ip.ProductUPC);
+				.WithMany()
+				.HasForeignKey(ip => ip.ProductUPC); // Assuming InventoryProduct has a ProductId foreign key
 
 		}
 	}

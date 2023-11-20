@@ -12,6 +12,5 @@ namespace Pharmacy.Interfaces
 		int UserId { get; }
 		string Name { get; }
 		string Surname { get; }
-		Cart Cart { get; }
 	}
 }
