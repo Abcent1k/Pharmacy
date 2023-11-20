@@ -36,6 +36,7 @@ namespace Pharmacy.Data
 			var config = builder.Build();
 			string connectionString = config.GetConnectionString("DefaultConnection");
 			optionsBuilder.UseSqlServer(connectionString);
+			optionsBuilder.EnableSensitiveDataLogging();
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -75,22 +76,46 @@ namespace Pharmacy.Data
 			modelBuilder.Entity<User>()
 				.HasMany(u => u.Orders)
 				.WithOne(o => o.User)
-				.HasForeignKey(o => o.UserId) // Assuming Order has a UserId foreign key
+				.HasForeignKey(o => o.UserId)
 				.OnDelete(DeleteBehavior.NoAction); // Disable cascade delete
 
 			// Configure one-to-many relationship between Order and InventoryProduct
 			modelBuilder.Entity<Order>()
-				.HasMany(o => o.InventoryProducts) // Assuming Order has a collection of InventoryProduct
-				.WithOne(ip => ip.Order) // Assuming InventoryProduct has a navigation property to Order
-				.HasForeignKey(ip => new { ip.OrderId, ip.UserId }) // Assuming InventoryProduct has an OrderId foreign key
+				.HasMany(o => o.InventoryProducts)
+				.WithOne(ip => ip.Order)
+				.HasForeignKey(ip => new { ip.OrderId, ip.UserId })
 				.OnDelete(DeleteBehavior.NoAction); // Disable cascade delete
 
 			// Configure many-to-one relationship between InventoryProduct and Product
 			modelBuilder.Entity<InventoryProduct>()
 				.HasOne(ip => ip.Product)
 				.WithMany(p => p.InventoryProducts)
-				.HasForeignKey(ip => ip.ProductUPC); // Assuming InventoryProduct has a ProductId foreign key
+				.HasForeignKey(ip => ip.ProductUPC);
 
+			var user1 = new User("Яна", "Алексюк", 1);
+			modelBuilder.Entity<User>().HasData(
+				user1,
+				new User("Євгеній", "Жидик", 2),
+				new User("Ясос", "Біба", 5)
+				);
+
+			var consumable1 = new Consumables(1234567890, "Mediprop", 250.5m, 88888888, ConsumableType.Syringe);
+			var device1 = new Devices(986235712, "Інгалятор", 850.25m, 11111111, DeviceType.Inhaler);
+
+			modelBuilder.Entity<Consumables>().HasData(consumable1);
+			modelBuilder.Entity<Devices>().HasData(device1);
+
+			var order1 = new Order { Id = 1, UserId = user1.UserId };
+			modelBuilder.Entity<Order>().HasData(order1);
+
+			modelBuilder.Entity<InventoryProduct>().HasData(
+				 new InventoryProduct(2)
+				 {
+					 UserId = user1.UserId,
+					 ProductUPC = consumable1.UPC,
+					 OrderId = order1.Id
+				 }
+				);
 		}
 	}
 }

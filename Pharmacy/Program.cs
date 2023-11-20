@@ -14,7 +14,7 @@ namespace Pharmacy
 	{
 		static void Main(string[] args)
 		{
-			var u = new User("Jhon", "Yana");
+			var u = new User("Саша", "Дядя");
 
 			using (var context = new FarmacyContext())
 			{

@@ -33,8 +33,16 @@ namespace Pharmacy.Classes.Products
 			ExpirationDate = expirationDate;
 			ConsumableType = consumableType;
         }
+		public Consumables(uint uPC,
+			 string name,
+			 decimal price,
+			 uint eDRPOU,
+			 ConsumableType consumableType) : base(uPC, name, price, eDRPOU)
+		{
+			ConsumableType = consumableType;
+		}
 
-        public override void Show()
+		public override void Show()
         {
             Console.WriteLine(ToString());
         }

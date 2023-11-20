@@ -10,6 +10,6 @@ namespace Pharmacy.Interfaces
 	{
 		decimal? TotalPrice { get; }
 		DateTime? OrderDate { get; }
-		void PlaceOrder(IUser user);
+		void PlaceOrder();
 	}
 }

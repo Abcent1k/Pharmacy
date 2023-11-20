@@ -27,8 +27,8 @@ namespace Pharmacy.Classes.Products
             Name = name;
             Price = price;
 			EDRPOU = eDRPOU;
-        }
-
+			InventoryProducts = new List<InventoryProduct>();
+		}
 
 		public abstract void Show();
         public abstract override string ToString();
