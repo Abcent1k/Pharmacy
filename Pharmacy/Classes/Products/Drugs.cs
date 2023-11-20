@@ -38,8 +38,18 @@ namespace Pharmacy.Classes.Products
 			DrugType = drugType;
 			NeedRecipe = needRecipe;
         }
+		public Drugs(uint uPC,
+			 string name,
+			 decimal price,
+			 uint eDRPOU,
+			 DrugType drugType,
+			 bool needRecipe) : base(uPC, name, price, eDRPOU)
+		{
+			DrugType = drugType;
+			NeedRecipe = needRecipe;
+		}
 
-        public override void Show()
+		public override void Show()
         {
             Console.WriteLine(ToString());
         }

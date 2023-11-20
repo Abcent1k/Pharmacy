@@ -25,7 +25,7 @@ namespace Pharmacy.Classes
 		[Required]
 		public ICollection<InventoryProduct> InventoryProducts { get; private set; }
 		public decimal? TotalPrice { get; private set; }
-		public DateTime? OrderDate { get; private set; }
+		public DateTime? OrderDate { get; set; }
 
 		public Order()
 		{
@@ -45,6 +45,7 @@ namespace Pharmacy.Classes
 				throw new InvalidOperationException();
 			OrderDate = DateTime.Now;
 			TotalPrice = CalculateTotalPrice();
+			User.Orders.Add(this);
 			Notify?.Invoke($"Замовлення на сумму {TotalPrice} від {OrderDate}\n" +
 						   $"Замовник: {User.Name} {User.Surname}");
 		}

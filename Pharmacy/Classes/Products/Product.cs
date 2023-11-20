@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,10 +12,11 @@ namespace Pharmacy.Classes.Products
     internal abstract class Product : IProduct
     {
 		[Key]
+		[DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public uint UPC { get; set; }
 		[Required]
 		[MaxLength(64)]
-		public string Name { get; private set; }
+		public string Name { get; set; }
 		[Required]
 		public decimal Price { get; private set; }
 		public ICollection<InventoryProduct> InventoryProducts { get; set; }

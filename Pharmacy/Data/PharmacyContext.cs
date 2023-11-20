@@ -22,13 +22,11 @@ namespace Pharmacy.Data
 		internal DbSet<Consumables> Consumables => Set<Consumables>();
 		internal DbSet<InventoryProduct> InventoryProducts => Set<InventoryProduct>();
 
-		//public PharmacyContext()
-		//{
-		//	Database.EnsureDeleted();
-		//	Database.EnsureCreated();
-		//}
-
-		public PharmacyContext(DbContextOptions<PharmacyContext> options): base(options) { }
+		public PharmacyContext(DbContextOptions<PharmacyContext> options): base(options) 
+		{
+			//Database.EnsureDeleted();
+			//Database.EnsureCreated(); 
+		}
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{

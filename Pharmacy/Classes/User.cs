@@ -25,10 +25,16 @@ namespace Pharmacy.Classes
 			Name = name;
 			Surname = surname;
 			Products = new List<InventoryProduct>();
+			Orders = new List<Order>();
 		}
 		public User(string name, string surname, int userId):this(name, surname)
 		{
 			UserId = userId;
+		}
+		public User(string name, string surname, int userId, string email):
+			this(name, surname, userId)
+		{
+			Email = email;
 		}
 
 	}
