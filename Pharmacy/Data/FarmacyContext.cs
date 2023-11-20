@@ -74,7 +74,7 @@ namespace Pharmacy.Data
 			// Configure one-to-many relationship between User and Order
 			modelBuilder.Entity<User>()
 				.HasMany(u => u.Orders)
-				.WithOne()
+				.WithOne(o => o.User)
 				.HasForeignKey(o => o.UserId) // Assuming Order has a UserId foreign key
 				.OnDelete(DeleteBehavior.NoAction); // Disable cascade delete
 
@@ -88,7 +88,7 @@ namespace Pharmacy.Data
 			// Configure many-to-one relationship between InventoryProduct and Product
 			modelBuilder.Entity<InventoryProduct>()
 				.HasOne(ip => ip.Product)
-				.WithMany()
+				.WithMany(p => p.InventoryProducts)
 				.HasForeignKey(ip => ip.ProductUPC); // Assuming InventoryProduct has a ProductId foreign key
 
 		}
