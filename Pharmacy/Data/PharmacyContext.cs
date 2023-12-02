@@ -25,7 +25,7 @@ namespace Pharmacy.Data
 		public PharmacyContext(DbContextOptions<PharmacyContext> options): base(options) 
 		{
 			//Database.EnsureDeleted();
-			//Database.EnsureCreated(); 
+			//Database.EnsureCreated();
 		}
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -81,7 +81,7 @@ namespace Pharmacy.Data
 				.HasForeignKey(ip => new { ip.OrderId, ip.UserId })
 				.OnDelete(DeleteBehavior.NoAction); // Disable cascade delete
 
-			// Configure many-to-one relationship between InventoryProduct and Product
+			// Configure one-to-many relationship between Product and InventoryProduct and
 			modelBuilder.Entity<InventoryProduct>()
 				.HasOne(ip => ip.Product)
 				.WithMany(p => p.InventoryProducts)
@@ -95,9 +95,11 @@ namespace Pharmacy.Data
 				);
 
 			var consumable1 = new Consumables(1234567890, "Mediprop", 250.5m, 88888888, ConsumableType.Syringe);
+			var consumable2 = new Consumables(1973209712, "Medipipa", 204.5m, 44444444, ConsumableType.Needle);
 			var device1 = new Devices(986235712, "Інгалятор", 850.25m, 11111111, DeviceType.Inhaler);
 
 			modelBuilder.Entity<Consumables>().HasData(consumable1);
+			modelBuilder.Entity<Consumables>().HasData(consumable2);
 			modelBuilder.Entity<Devices>().HasData(device1);
 
 			var order1 = new Order { Id = 1, UserId = user1.UserId };
