@@ -21,9 +21,9 @@ namespace Pharmacy.Classes
 		public int Id { get; set; }
 		[Required]
 		public int UserId { get; set; }
-		public User User { get; set; }
+		public virtual User User { get; set; }
 		[Required]
-		public ICollection<InventoryProduct> InventoryProducts { get; private set; }
+		public virtual ICollection<InventoryProduct> InventoryProducts { get; private set; }
 		public decimal? TotalPrice { get; private set; }
 		public DateTime? OrderDate { get; set; }
 

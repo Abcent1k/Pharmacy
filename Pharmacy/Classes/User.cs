@@ -4,16 +4,18 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 namespace Pharmacy.Classes
-{
+{	
 	internal class User: IUser
 	{
 		public int UserId { get; }
-		public ICollection<Order>? Orders { get; }
-		public ICollection<InventoryProduct> Products { get; }
+		public virtual ICollection<Order>? Orders { get; }
+		public virtual ICollection<InventoryProduct> Products { get; }
 		[MaxLength(30)]
 		public string Name { get; private set; }
 		[MaxLength(30)]

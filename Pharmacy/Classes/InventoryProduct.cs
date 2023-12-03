@@ -12,11 +12,11 @@ namespace Pharmacy.Classes
 	{
 		[Required]
 		public int OrderId { get; set; }
-		public Order Order { get; set; }
+		public virtual Order Order { get; set; }
 		[Required]
 		public int UserId { get; set; }
-		public User User { get; private set; }
-		public Product Product { get; set; }
+		public virtual User User { get; private set; }
+		public virtual Product Product { get; set; }
 		[Required]
 		public uint ProductUPC { get; set; }
 		[Required]

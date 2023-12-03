@@ -157,6 +157,7 @@ namespace Pharmacy
 				context.SaveChanges();
 				Console.WriteLine(context.Entry(userAsNoTracking).State);
 
+
 				//Збережена процедура
 				var orderId = 1;
 				var orderDetails_ = context.Orders
@@ -174,8 +175,42 @@ namespace Pharmacy
 				foreach (var d in orders)
 					Console.WriteLine(d);
 				Console.WriteLine();
-			}
 
+			}
+			using (var context = contextFactory.CreateDbContext(new string[] { }))
+			{
+				//Eager Loading
+				var ordersWithUsers = context.Orders.Include(o => o.User).ToList();
+				foreach (var d in ordersWithUsers)
+				{
+					Console.WriteLine(d);
+					Console.WriteLine(d.User);
+				}
+				Console.WriteLine();
+			}
+			using (var context = contextFactory.CreateDbContext(new string[] { }))
+			{
+				//Explicit Loading
+				var user = context.Users.First();
+				context.Entry(user).Collection(u => u.Orders).Load();
+				Console.WriteLine(user);
+				foreach (var d in user.Orders)
+					Console.WriteLine(d.Id);
+				Console.WriteLine();
+			}
+			using (var context = contextFactory.CreateDbContext(new string[] { }))
+			{
+				//Lazy Loading
+				var users = context.Users.ToList();
+				foreach (var us in users)
+				{
+					Console.WriteLine(us.Name);
+					foreach (var o in us.Orders)
+						Console.WriteLine($"\t{o.Id}");
+				}
+				Console.WriteLine();
+			}
+						
 
 			var stop = Console.ReadKey();
 		}

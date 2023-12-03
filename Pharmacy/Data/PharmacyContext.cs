@@ -32,6 +32,7 @@ namespace Pharmacy.Data
 		{
 			optionsBuilder.EnableSensitiveDataLogging();
 			optionsBuilder.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted });
+			optionsBuilder.UseLazyLoadingProxies();
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

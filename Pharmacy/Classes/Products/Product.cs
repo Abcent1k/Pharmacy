@@ -19,7 +19,7 @@ namespace Pharmacy.Classes.Products
 		public string Name { get; set; }
 		[Required]
 		public decimal Price { get; private set; }
-		public ICollection<InventoryProduct> InventoryProducts { get; set; }
+		public virtual ICollection<InventoryProduct> InventoryProducts { get; set; }
 		[Required]
 		public uint EDRPOU { get; private set; }
 
