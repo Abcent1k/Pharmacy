@@ -24,8 +24,7 @@ namespace Pharmacy.Data
 
 		public PharmacyContext(DbContextOptions<PharmacyContext> options): base(options) 
 		{
-			//Database.EnsureDeleted();
-			//Database.EnsureCreated();
+
 		}
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -17,20 +17,48 @@ namespace Pharmacy
 {
 	internal class Program
 	{
-		private static List<string> names = new List<string> { "Emily", "Michael", "Sofia", "Jacob", "Olivia"/*, "Ethan", "Ava", "Daniel", "Isabella", "Matthew", "Emma", "Lucas", "Mia", "Aiden", "Charlotte" */};
-		private static List<string> surnames = new List<string> { "Smith", "Johnson", "Williams", "Brown", "Jones"/*, "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson" */};
+		private static List<string> names = new List<string> { "Emily", "Michael", "Sofia", "Jacob", "Olivia", "Ethan", "Ava", "Daniel", "Isabella", "Matthew", "Emma", "Lucas", "Mia", "Aiden", "Charlotte"};
+		private static List<string> surnames = new List<string> { "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson"};
 		private static int currentIndex = 0;
 		private static Random random = new Random();
 		private static Mutex mutex = new Mutex();
 
-		private static List<User> users = new List<User>();
+		private static List<string> productNames = new List<string>
+		{
+			"Acetaminophen", "Ibuprofen", "Amoxicillin", "Cephalexin",
+			"Clindamycin", "Ciprofloxacin", "Metformin", "Atorvastatin",
+			"Simvastatin", "Lisinopril", "Losartan", "Amlodipine",
+			"Metoprolol", "Levothyroxine", "Omeprazole", "Lorazepam",
+			"Prednisone", "Meloxicam", "Gabapentin", "Sertraline"
+		};
+		private static object lockObject = new object();
 		private static List<Thread> threads = new List<Thread>();
 
 		private static PharmacyContextFactory contextFactory = new PharmacyContextFactory();
 
 		public static void Main(string[] args)
 		{
-			GenerateAndSaveUsers();
+			using (var context = contextFactory.CreateDbContext(new string[] { }))
+			{
+				context.Database.EnsureDeleted();
+				context.Database.EnsureCreated();
+			}
+
+			threads.Add(new Thread(() => GenerateAndSaveUsers()));
+
+			threads.Add(new Thread(() => CreateAndSaveDrugs()));
+			threads.Add(new Thread(() => CreateAndSaveConsumables()));
+			threads.Add(new Thread(() => CreateAndSaveDevices()));
+
+			foreach (var thread in threads)
+			{
+				thread.Start();
+			}
+
+			foreach (var thread in threads)
+			{
+				thread.Join();
+			}
 
 			var stop = Console.ReadKey();
 		}
@@ -38,7 +66,7 @@ namespace Pharmacy
 		private static void GenerateAndSaveUsers()
 		{
 			var tasks = new List<Task>();
-			for (int i = 0; i < 20; i++)
+			for (int i = 0; i < 50; i++)
 			{
 				tasks.Add(Task.Run(async () =>
 				{
@@ -46,13 +74,9 @@ namespace Pharmacy
 					if (user != null)
 					{
 						await AddUserToDatabaseAsync(user);
-						lock (users)
-						{
-							users.Add(user);
-						}
 
 						await Console.Out.WriteLineAsync($"Time - {DateTime.Now}; Name - {user.Name}; Surname - {user.Surname}");
-						//await Task.Delay(5000);
+						await Task.Delay(5000);
 					}
 				}));
 			}
@@ -88,209 +112,122 @@ namespace Pharmacy
 			}
 		}
 
-		//static void Main(string[] args)
-		//{
-		//	var u = new User("Саша", "Дядя");
+		private static void CreateAndSaveDrugs()
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				var drug = new Drugs(
+					GenerateRandomUPC(),
+					GetUniqueProductName(),
+					GenerateRandomPrice(),
+					GenerateRandomUPC(),
+					GenerateRandomDrugType(),
+					false);
 
-		//	var contextFactory = new PharmacyContextFactory();
+				Console.WriteLine($"Drug - {drug.Name}; {drug.Price}; Time - {DateTime.Now}");
+				Thread.Sleep(500);
+				SaveProduct(drug);
+			}
+		}
 
-		//	////Додавання
-		//	//using (var context = contextFactory.CreateDbContext(new string[] { }))
-		//	//{
-		//	//	context.Users.Add(u);
-		//	//	context.SaveChanges();
-		//	//}
+		private static void CreateAndSaveDevices()
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				var device = new Devices(
+					GenerateRandomUPC(),
+					GetUniqueProductName(),
+					GenerateRandomPrice(),
+					GenerateRandomUPC(),
+					GenerateRandomDeviceType());
 
-		//	////Зміна
-		//	//using (var context = contextFactory.CreateDbContext(new string[] { }))
-		//	//{
-		//	//	var userToUpdate = context.Users.Find(1);
-		//	//	if (userToUpdate != null)
-		//	//	{
-		//	//		userToUpdate.Email = "yana@gmail.com";
-		//	//		context.SaveChanges();
-		//	//	}
-		//	//}
+				Console.WriteLine($"Device - {device.Name}; {device.Price}; Time - {DateTime.Now}");
+				Thread.Sleep(500);
+				SaveProduct(device);
+			}
+		}
 
-		//	////Видалення
-		//	//using (var context = contextFactory.CreateDbContext(new string[] { }))
-		//	//{
-		//	//	var userToDelete = context.Users.Find(6);
-		//	//	if (userToDelete != null)
-		//	//	{
-		//	//		context.Users.Remove(userToDelete);
-		//	//		context.SaveChanges();
-		//	//	}
-		//	//}
+		private static void CreateAndSaveConsumables()
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				var cons = new Consumables(
+					GenerateRandomUPC(),
+					GetUniqueProductName(),
+					GenerateRandomPrice(),
+					GenerateRandomUPC(),
+					GenerateRandomConsumableType());
 
-		//	////Додавання
-		//	//using (var context = contextFactory.CreateDbContext(new string[] { }))
-		//	//{
-		//	//	var newProduct = new Drugs(23896531, "Ніпіксин", 204.5m, 76548231, DrugType.Drops, false);
-		//	//	context.Products.Add(newProduct);
+                Console.WriteLine($"Consumable - {cons.Name}; {cons.Price}; Time - {DateTime.Now}");
+                Thread.Sleep(1000);
+				SaveProduct(cons);
+			}
+		}
 
+		private static string GetUniqueProductName()
+		{
+			lock (lockObject)
+			{
+				if (productNames.Count > 0)
+				{
+					int index = random.Next(productNames.Count);
+					string name = productNames[index];
+					productNames.RemoveAt(index);
+					return name;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
 
-		//	//	var user = context.Users.Find(1);
-		//	//	var newOrder = new Order
-		//	//	{
-		//	//		User = user,
-		//	//		UserId = 1,
-		//	//	};
+		private static DrugType GenerateRandomDrugType()
+		{
+			var values = Enum.GetValues(typeof(DrugType));
+			return (DrugType)values.GetValue(random.Next(values.Length));
+		}
 
-		//	//	var newInventoryProduct = new InventoryProduct(user, newProduct, 5, newOrder);
-		//	//	context.InventoryProducts.Add(newInventoryProduct);
+		private static DeviceType GenerateRandomDeviceType()
+		{
+			var values = Enum.GetValues(typeof(DeviceType));
+			return (DeviceType)values.GetValue(random.Next(values.Length));
+		}
 
-		//	//	newOrder.PlaceOrder();
-		//	//	context.Orders.Add(newOrder);
+		private static ConsumableType GenerateRandomConsumableType()
+		{
+			var values = Enum.GetValues(typeof(ConsumableType));
+			return (ConsumableType)values.GetValue(random.Next(values.Length));
+		}
 
-		//	//	context.SaveChanges();
-		//	//}
+		private static uint GenerateRandomUPC()
+		{
+			return (uint)random.Next(10000000, 99999999);
+		}
+		private static decimal GenerateRandomPrice()
+		{
+			return (decimal)random.Next(50, 800);
+		}
 
-		//	////Зміна
-		//	//using (var context = contextFactory.CreateDbContext(new string[] { }))
-		//	//{
-		//	//	var productToUpdate = context.Products.Find(23896531u);
-		//	//	if (productToUpdate != null)
-		//	//	{
-		//	//		productToUpdate.Name = "Ніксельпін";
-		//	//	}
+		private static void SaveProduct(IProduct product)
+		{
+			using (var context = contextFactory.CreateDbContext(new string[] { }))
+			{
+				if (product is Drugs drug)
+				{
+					context.Drugs.Add(drug);
+				}
+				else if (product is Consumables consumable)
+				{
+					context.Consumables.Add(consumable);
+				}
+				else if (product is Devices device)
+				{
+					context.Devices.Add(device);
+				}
 
-		//	//	var inventoryToUpdate = context.InventoryProducts.Find(2, 1, 23896531u);
-		//	//	if (inventoryToUpdate != null)
-		//	//	{
-		//	//		inventoryToUpdate.Quantity = 20;
-		//	//	}
-
-		//	//	context.SaveChanges();
-		//	//}
-
-		//	//using (var context = contextFactory.CreateDbContext(new string[] { }))
-		//	//{
-		//	//	//Union
-		//	//	var drugsAndDevices = context.Drugs.Select(d => d.Name)
-		//	//		.Union(context.Devices.Select(d => d.Name));
-
-		//	//	foreach (var d in drugsAndDevices)
-		//	//		Console.WriteLine(d);
-		//	//	Console.WriteLine();
-
-		//	//	//Except
-		//	//	var drugsNotInDevices = context.Drugs.Select(d => d.Name)
-		//	//		.Except(context.Devices.Select(d => d.Name));
-
-		//	//	foreach (var d in drugsNotInDevices)
-		//	//		Console.WriteLine(d);
-		//	//	Console.WriteLine();
-
-		//	//	//Intersect
-		//	//	var commonInDrugsAndDevices = context.Drugs.Select(d => d.Price)
-		//	//		.Intersect(context.Consumables.Select(d => d.Price));
-
-		//	//	foreach (var d in commonInDrugsAndDevices)
-		//	//		Console.WriteLine(d);
-		//	//	Console.WriteLine();
-
-		//	//	//Join
-		//	//	var orderDetails = context.Orders
-		//	//		.Join(context.Users,
-		//	//			order => order.UserId,
-		//	//			user => user.UserId,
-		//	//			(order, user) => new { user.Name, order.OrderDate });
-
-		//	//	foreach (var d in orderDetails)
-		//	//		Console.WriteLine(d);
-		//	//	Console.WriteLine();
-
-		//	//	//Distinct
-		//	//	var uniquePrices = context.Products.Select(d => d.Price).Distinct();
-
-		//	//	foreach (var d in uniquePrices)
-		//	//		Console.WriteLine(d);
-		//	//	Console.WriteLine();
-
-		//	//	//Group by + Count
-		//	//	var productCountsByPrice = context.Products
-		//	//		.GroupBy(p => p.Price)
-		//	//		.Select(g => new { Price = g.Key, Count = g.Count() });
-
-		//	//	foreach (var d in productCountsByPrice)
-		//	//		Console.WriteLine(d);
-		//	//	Console.WriteLine();
-
-		//	//	//NoTracking
-		//	//	var userAsNoTracking = context.Users.AsNoTracking().First();
-		//	//	Console.WriteLine(userAsNoTracking.Email);
-		//	//	Console.WriteLine(context.Entry(userAsNoTracking).State);
-
-		//	//	userAsNoTracking.Email = "yanocka@gmail.com";
-		//	//	context.Entry(userAsNoTracking).State = EntityState.Modified;
-		//	//	Console.WriteLine(context.Entry(userAsNoTracking).State);
-
-		//	//	context.SaveChanges();
-		//	//	Console.WriteLine(context.Entry(userAsNoTracking).State);
-
-
-		//	//	//Збережена процедура
-		//	//	var orderId = 1;
-		//	//	var orderDetails_ = context.Orders
-		//	//		.FromSqlRaw("EXEC GetOrderDetails @orderId", new SqlParameter("@orderId", orderId))
-		//	//		.ToList();
-		//	//	foreach (var d in orderDetails_)
-		//	//		Console.WriteLine(d);
-		//	//	Console.WriteLine();
-
-		//	//	//Збережена функція
-		//	//	int customerId = 1; // Припустимо, це ID клієнта
-		//	//	var orders = context.Orders
-		//	//		.FromSqlRaw("SELECT * FROM dbo.GetOrdersByUserId({0})", customerId)
-		//	//		.ToList();
-		//	//	foreach (var d in orders)
-		//	//		Console.WriteLine(d);
-		//	//	Console.WriteLine();
-
-		//	//}
-		//	//using (var context = contextFactory.CreateDbContext(new string[] { }))
-		//	//{
-		//	//	//Eager Loading
-		//	//	var ordersWithUsers = context.Orders.Include(o => o.User).ToList();
-		//	//	foreach (var d in ordersWithUsers)
-		//	//	{
-		//	//		Console.WriteLine(d);
-		//	//		Console.WriteLine(d.User);
-		//	//	}
-		//	//	Console.WriteLine();
-		//	//}
-		//	//using (var context = contextFactory.CreateDbContext(new string[] { }))
-		//	//{
-		//	//	//Explicit Loading
-		//	//	var user = context.Users.First();
-		//	//	context.Entry(user).Collection(u => u.Orders).Load();
-		//	//	Console.WriteLine(user);
-		//	//	foreach (var d in user.Orders)
-		//	//		Console.WriteLine(d.Id);
-		//	//	Console.WriteLine();
-		//	//}
-		//	//using (var context = contextFactory.CreateDbContext(new string[] { }))
-		//	//{
-		//	//	//Lazy Loading
-		//	//	var users = context.Users.ToList();
-		//	//	foreach (var us in users)
-		//	//	{
-		//	//		Console.WriteLine(us.Name);
-		//	//		foreach (var o in us.Orders)
-		//	//			Console.WriteLine($"\t{o.Id}");
-		//	//	}
-		//	//	Console.WriteLine();
-		//	//}
-
-
-
-		//	using (var context = contextFactory.CreateDbContext(new string[] { }))
-		//	{
-
-		//	}
-
-		//		var stop = Console.ReadKey();
-		//}
+				context.SaveChanges();
+			}
+		}
 	}
 }
