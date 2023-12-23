@@ -32,7 +32,6 @@ namespace Pharmacy
 			"Prednisone", "Meloxicam", "Gabapentin", "Sertraline"
 		};
 		private static object lockObject = new object();
-		private static List<Thread> threads = new List<Thread>();
 
 		private static PharmacyContextFactory contextFactory = new PharmacyContextFactory();
 
@@ -44,6 +43,8 @@ namespace Pharmacy
 				context.Database.EnsureCreated();
 			}
 
+			List<Thread> threads = new List<Thread>();
+
 			threads.Add(new Thread(() => GenerateAndSaveUsers()));
 
 			threads.Add(new Thread(() => CreateAndSaveDrugs()));
@@ -51,15 +52,21 @@ namespace Pharmacy
 			threads.Add(new Thread(() => CreateAndSaveDevices()));
 
 			foreach (var thread in threads)
-			{
 				thread.Start();
-			}
 
 			foreach (var thread in threads)
-			{
 				thread.Join();
-			}
 
+			var readTasks = new List<Task>
+			{
+				Task.Run(() => ReadAndDisplayUsers()),
+				Task.Run(() => ReadAndDisplayDrugs()),
+				Task.Run(() => ReadAndDisplayDevices()),
+				Task.Run(() => ReadAndDisplayConsumables())
+			};
+
+			Task.WhenAll(readTasks).Wait();
+		
 			var stop = Console.ReadKey();
 		}
 
@@ -75,7 +82,7 @@ namespace Pharmacy
 					{
 						await AddUserToDatabaseAsync(user);
 
-						await Console.Out.WriteLineAsync($"Time - {DateTime.Now}; Name - {user.Name}; Surname - {user.Surname}");
+						await Console.Out.WriteLineAsync($"Add User: Name - {user.Name}; Surname - {user.Surname}; Time - {DateTime.Now}");
 						await Task.Delay(5000);
 					}
 				}));
@@ -124,7 +131,7 @@ namespace Pharmacy
 					GenerateRandomDrugType(),
 					false);
 
-				Console.WriteLine($"Drug - {drug.Name}; {drug.Price}; Time - {DateTime.Now}");
+				Console.WriteLine($"Add Drug - {drug.Name}; {drug.Price}; Time - {DateTime.Now}");
 				Thread.Sleep(500);
 				SaveProduct(drug);
 			}
@@ -141,7 +148,7 @@ namespace Pharmacy
 					GenerateRandomUPC(),
 					GenerateRandomDeviceType());
 
-				Console.WriteLine($"Device - {device.Name}; {device.Price}; Time - {DateTime.Now}");
+				Console.WriteLine($"Add Device - {device.Name}; {device.Price}; Time - {DateTime.Now}");
 				Thread.Sleep(500);
 				SaveProduct(device);
 			}
@@ -158,7 +165,7 @@ namespace Pharmacy
 					GenerateRandomUPC(),
 					GenerateRandomConsumableType());
 
-                Console.WriteLine($"Consumable - {cons.Name}; {cons.Price}; Time - {DateTime.Now}");
+                Console.WriteLine($"Add Consumable - {cons.Name}; {cons.Price}; Time - {DateTime.Now}");
                 Thread.Sleep(1000);
 				SaveProduct(cons);
 			}
@@ -227,6 +234,58 @@ namespace Pharmacy
 				}
 
 				context.SaveChanges();
+			}
+		}
+
+		private static async Task ReadAndDisplayUsers()
+		{
+			using (var context = contextFactory.CreateDbContext(new string[] { }))
+			{
+				var users = await context.Users.ToListAsync();
+				foreach (var user in users)
+				{
+					await Console.Out.WriteLineAsync($"User: {user.Name} {user.Surname}");
+					await Task.Delay(10);
+				}
+			}
+		}
+
+		private static async Task ReadAndDisplayDrugs()
+		{
+			using (var context = contextFactory.CreateDbContext(new string[] { }))
+			{
+				var drugs = await context.Drugs.ToListAsync();
+				foreach (var drug in drugs)
+				{
+					await Console.Out.WriteLineAsync($"Drug: {drug.Name} {drug.Price}");
+					await Task.Delay(10);
+				}
+			}
+		}
+
+		private static async Task ReadAndDisplayDevices()
+		{
+			using (var context = contextFactory.CreateDbContext(new string[] { }))
+			{
+				var devices = await context.Devices.ToListAsync();
+				foreach (var device in devices)
+				{
+					await Console.Out.WriteLineAsync($"Device: {device.Name} {device.Price}");
+					await Task.Delay(10);
+				}
+			}
+		}
+
+		private static async Task ReadAndDisplayConsumables()
+		{
+			using (var context = contextFactory.CreateDbContext(new string[] { }))
+			{
+				var consumables = await context.Consumables.ToListAsync();
+				foreach (var consumable in consumables)
+				{
+					await Console.Out.WriteLineAsync($"Consumable: {consumable.Name} {consumable.Price}");
+					await Task.Delay(10);
+				}
 			}
 		}
 	}
