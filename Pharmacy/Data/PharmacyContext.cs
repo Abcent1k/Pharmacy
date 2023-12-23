@@ -30,8 +30,9 @@ namespace Pharmacy.Data
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			optionsBuilder.EnableSensitiveDataLogging();
-			optionsBuilder.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted });
+
+			//optionsBuilder.EnableSensitiveDataLogging();
+			//optionsBuilder.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted });
 			optionsBuilder.UseLazyLoadingProxies();
 		}
 
@@ -41,7 +42,7 @@ namespace Pharmacy.Data
 
 			modelBuilder.Entity<Product>().Property(p => p.Price).HasPrecision(18, 2);
 			modelBuilder.Entity<Product>().ToTable(t => t.HasCheckConstraint("EDRPOU", "LEN(EDRPOU) = 8"));
-			
+
 			modelBuilder.Entity<Consumables>()
 				.Property(c => c.ExpirationDate)
 				.HasDefaultValue(DateTime.Now.AddYears(5));
